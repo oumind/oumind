@@ -1,0 +1,124 @@
+// Custom styles.
+$black-green  = #172727
+$front-color  = #5EBEEE
+
+a {
+  &:hover{
+    color: $front-color;
+    border-bottom-color: $front-color;
+  }
+}
+
+#article-toc-inner:after, #content-inner:after, #content:after, #footer:after, #plugin-list-header:after, .archive-post-link:after, .article-header:after, .article-inner:after, .highlight figcaption:after, .inner:after, .plugin-tag-list:after, .wrapper:after {
+  clear: both;
+}
+
+#article-toc-inner:after, #article-toc-inner:before, .inner:after, .inner:before, .wrapper:after, .wrapper:before, .wrapper:before {
+  content: "";
+  display: table;
+}
+
+// Header
+// --------------------------------------------------
+header#header {
+  background: $black-green;
+
+  .header-single-inner {
+    margin-bottom: 0px;
+  }
+}
+
+.site-meta {
+  margin-left: 0;
+  .brand {
+    color: white;
+    padding-left: 45px;
+    background: transparent url("../images/ologo.png") no-repeat 0px center;
+    background-size: 39px;
+    +mobile() { padding-left: 0px; display: block; width: 50%; margin: 0 auto;}
+  }
+}
+
+.subtitle {
+  text-align: center;
+  color: #CCCCCC;
+  i {
+    padding-left: 50px;
+    +mobile() { padding-left: 0px;}
+  }
+}
+
+.logo-line-before,
+.logo-line-after {
+
+  +mobile() {
+    width: 70%;
+  }
+
+  i {
+    height: 1px;
+    background: white;
+    +mobile() {
+      height: 1px;
+    }
+  }
+}
+
+// Menu
+// --------------------------------------------------
+.menu {
+  margin: 13px 0 0 0;
+  padding: 0;
+  +mobile() { margin-top: 15px; }
+
+  .menu-item a {
+    color: white;
+    background: transparent;
+    &:hover {
+      color: $front-color;
+      background: transparent;
+    }
+  }
+}
+
+// Second-header
+// ---------------------------------------------------
+header#banner {
+  text-align: center;
+  margin: 0 auto 50px;
+  padding-bottom: 50px;
+  background: $black-green;
+  color: white;
+  & #banner-start-command {
+    color: orange;
+  }
+}
+
+// Post
+// ---------------------------------------------------
+.posts-collapse {
+  .post-header:hover {
+    color: $front-color;
+    border-bottom-color: $front-color;
+    &::before {background: $front-color;}
+  }
+}
+
+.post-nav-item a:hover {
+  border-bottom: $front-color 1px dashed;
+  font-weight: normal;
+}
+
+// Footer
+// ---------------------------------------------------
+.footer {
+  font-size: 12px;
+  & .footer-tips {
+    float: right;
+    bottom: 0;
+    //color: #CCC;
+    //text-shadow: 0 -1px 0 #333;
+
+    +mobile() { float: none; }
+  }
+}
