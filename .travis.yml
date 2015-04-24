@@ -5,7 +5,7 @@ node_js:
 
 before_install:
   # Decrypt the private key
-  - openssl aes-256-cbc -K $encrypted_5395e06970ac_key -iv $encrypted_5395e06970ac_iv -in .travis/ssh_key.enc -out ~/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_28b0d322b02e_key -iv $encrypted_28b0d322b02e_iv -in .travis/ssh_key.enc -out ~/.ssh/id_rsa -d
   # - cat ~/.ssh/id_rsa
   # Set the permission of the key
   - chmod 600 ~/.ssh/id_rsa
@@ -19,7 +19,8 @@ before_install:
   - git config --global user.name "dellheng"
   - git config --global user.email mrheng@163.com
   # Clone the repository
-  - git clone https://github.com/dellheng/dellheng.github.io .deploy_git
+  - git clone git@github.com:oumind/oumind.git .deploy_git
+  - git checkout gh-pages
 
 
 install:
