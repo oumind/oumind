@@ -68,5 +68,5 @@ theme: mindx
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@gitcafe.com:Oumind/oumind.git
-  branch: gitcafe-pages
+  repository: git@github.com:oumind/oumind.git
+  branch: gh-pages
