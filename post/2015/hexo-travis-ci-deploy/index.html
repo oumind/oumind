@@ -1,0 +1,894 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mindx">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+    <link rel="stylesheet" type="text/css" href="/vendors/font-awesome/css/font-awesome.min.css?v=4.3.0"/>
+    <link rel="stylesheet" type="text/css" href="/vendors/font-awesome-animation/dist/font-awesome-animation.min.css?v=0.0.6"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.1"/>
+
+
+    <meta name="description" content="Never stop innovating." />
+
+
+
+
+    <meta name="keywords" content="Hexo,next" />
+
+
+
+
+
+    <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.1" />
+
+
+
+
+  <title> 使用travis-ci自动部署hexo到github-page // Oumind </title>
+</head>
+
+<body>
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Oumind</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+    
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          时间轴
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+  </ul>
+
+<h6 class="subtitle"><i>Open your mind, you'll find more.</i></h6>
+
+      </div>
+    </header>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+            
+          
+
+          <div id="posts" class="posts-expand">
+            
+  
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              使用travis-ci自动部署hexo到github-page
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          
+            发表于 2015-06-12
+          
+        </span>
+
+        
+          
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          <h1 id="概述">概述</h1><p>参照hexo作者的blog <a href="http://zespia.tw/blog/2015/01/21/continuous-deployment-to-github-with-travis/" target="_blank" rel="external">http://zespia.tw/blog/2015/01/21/continuous-deployment-to-github-with-travis/</a><br>hexo官网就是采用该方案</p>
+<h1 id="生成key">生成key</h1><pre><code>$ ssh-keygen -t rsa -C <span class="string">"mrheng@163.com"</span>
+Generating <span class="keyword">public</span>/<span class="keyword">private</span> rsa key pair.
+Enter file <span class="keyword">in</span> which to save the key (<span class="regexp">~/.ssh/</span>id_rsa): <span class="regexp">~/blog/</span>oumind<span class="regexp">/.travis/</span>ssh_key
+Enter passphrase (empty <span class="keyword">for</span> no passphrase):
+Enter same passphrase <span class="string">again:</span>
+Your identification has been saved <span class="keyword">in</span> <span class="regexp">~/blog/</span>oumind<span class="regexp">/.travis/</span>ssh_key.
+Your <span class="keyword">public</span> key has been saved <span class="keyword">in</span> <span class="regexp">~/blog/</span>oumind<span class="regexp">/.travis/</span>ssh_key.pub.
+</code></pre><h1 id="github设置deploy_key">github设置deploy key</h1><p><img src="/img/travis/github-deploy-keys.png" width="600" height="400"></p>
+<h1 id="travis添加项目">travis添加项目</h1><p><img src="/img/travis/travis-add-project.png" width="600" height="400"></p>
+<h1 id="加密私有key">加密私有key</h1><p>注意：官网这一段话 <a href="http://docs.travis-ci.com/user/encrypting-files/" target="_blank" rel="external">http://docs.travis-ci.com/user/encrypting-files/</a></p>
+<pre><code>&gt;Caveat
+
+There <span class="keyword">is</span> a <span class="keyword">report</span> <span class="keyword">of</span> this <span class="keyword">function</span> <span class="keyword">not</span> working <span class="keyword">on</span> a local Windows machine. Please <span class="keyword">use</span> a Linux <span class="keyword">or</span> OS X machine.
+</code></pre><p>本人亲测，在windows上加密密钥的确有问题,花了半天时间啊，杯具</p>
+<ol>
+<li>安装Travis CI Client<br>参照 <a href="https://github.com/travis-ci/travis.rb#installation" target="_blank" rel="external">https://github.com/travis-ci/travis.rb#installation</a></li>
+</ol>
+<p>Make sure you have at least <a href="http://www.ruby-lang.org/en/downloads/" target="_blank" rel="external">Ruby</a> 1.9.3 (2.0.0 recommended) installed.</p>
+<p>You can check your Ruby version by running <code>ruby -v</code>:</p>
+<pre><code>$ ruby -v
+ruby <span class="number">2.0.0p195</span> (<span class="number">2013-05-14</span> revision 40734) [x86_64-darwin12.3.0]
+</code></pre><p>Then run:</p>
+<pre><code>$ gem install travis -<span class="keyword">v</span> <span class="number">1.7</span>.<span class="number">6</span> --<span class="keyword">no</span>-rdoc --<span class="keyword">no</span>-<span class="keyword">ri</span>
+</code></pre><p>墙内用户请设置淘宝的gem镜像 参照 <a href="http://ruby.taobao.org/" target="_blank" rel="external">http://ruby.taobao.org/</a></p>
+<p>Now make sure everything is working:</p>
+<pre><code>$ travis <span class="property">version</span>
+<span class="number">1.7</span>.6 
+</code></pre><ol>
+<li><p>登录travis</p>
+<pre><code>travis login <span class="comment">--auto</span>
+</code></pre></li>
+</ol>
+<p>Try running with —github-token or —auto if you don’t want to enter your password anyway.</p>
+<p>注意： 执行travis命令最好在git仓库目录下，否则每次要用-r参数指定仓库，比较麻烦</p>
+<ol>
+<li><p>加密文件</p>
+<pre><code>$ travis <span class="built_in">encrypt</span>-<span class="built_in">file</span> .travis/ssh_key .travis/ssh_key.enc
+encrypting .travis/ssh_key <span class="keyword">for</span> oumind/oumind
+storing <span class="built_in">result</span> <span class="keyword">as</span> .travis/ssh_key.enc
+DANGER ZONE: Override existing .travis/ssh_key.enc? |no| yes
+storing secure env variables <span class="keyword">for</span> decryption
+
+Please <span class="built_in">add</span> <span class="operator">the</span> following <span class="built_in">to</span> your build script (before_install stage <span class="operator">in</span> your .travis.yml, <span class="keyword">for</span> instance):
+
+    openssl aes-<span class="number">256</span>-cbc -K $encrypted_28b0d322b02e_key -iv $encrypted_28b0d322b02e_iv -<span class="operator">in</span> .travis/ssh_key.enc -out .travis/ssh_key -d
+
+Pro Tip: You can <span class="built_in">add</span> <span class="keyword">it</span> automatically <span class="keyword">by</span> running <span class="operator">with</span> <span class="comment">--add.</span>
+
+Make sure <span class="built_in">to</span> <span class="built_in">add</span> .travis/ssh_key.enc <span class="built_in">to</span> <span class="operator">the</span> git repository.
+Make sure <span class="operator">not</span> <span class="built_in">to</span> <span class="built_in">add</span> .travis/ssh_key <span class="built_in">to</span> <span class="operator">the</span> git repository.
+Commit all changes <span class="built_in">to</span> your .travis.yml. 
+</code></pre></li>
+<li><p>确认travis环境变量</p>
+<pre><code>$ travis env list
+<span class="comment"># environment variables for oumind/oumind</span>
+<span class="constant">encrypted_28b0d322b02e_key</span>=[secure]
+<span class="constant">encrypted_28b0d322b02e_iv</span>=[secure]
+</code></pre></li>
+<li><p>将生成的公私钥移到其他目录备份</p>
+</li>
+</ol>
+<h1 id="修改-travis-yml">修改.travis.yml</h1><p>配置文件参照 <a href="https://github.com/hexojs/site/blob/master/.travis.yml" target="_blank" rel="external">https://github.com/hexojs/site/blob/master/.travis.yml</a><br>修改openssl 环境变量部分,你也可以参照我们的<br><a href="https://github.com/oumind/oumind/blob/master/.travis.yml" target="_blank" rel="external">https://github.com/oumind/oumind/blob/master/.travis.yml</a></p>
+<h1 id="修改hexo的_config-yml">修改hexo的_config.yml</h1><p>参照官方文档 <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">http://hexo.io/docs/deployment.html</a></p>
+<h1 id="push到github">push到github</h1><p>travis会自动构建并发布</p>
+
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+
+        
+          <div class="post-nav">
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/post/2015/sketch-tools-plugins/">Sketch常用工具&插件</a>
+              
+            </div>
+
+            <div class="post-nav-next post-nav-item">
+              
+            </div>
+          </div>
+        
+
+        
+        
+      </div>
+    
+  </div>
+
+
+
+  
+    <div class="comments" id="comments">
+      
+    </div>
+  
+
+          </div>
+
+          
+        </div>
+
+        
+<div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview">
+          站点概览
+        </li>
+      </ul>
+    
+
+    <div class="site-overview">
+      <div class="site-author motion-element">
+        <img class="site-author-image" src="/images/default_avatar.jpg" alt="Oumind" />
+        <p class="site-author-name">Oumind</p>
+      </div>
+      <p class="site-description motion-element">Never stop innovating.</p>
+      <div class="site-state motion-element">
+        <div class="site-state-item site-state-posts">
+          <a href="/archives">
+            <span class="site-state-item-count">3</span>
+            <span class="site-state-item-name">日志</span>
+          </a>
+        </div>
+
+        <div class="site-state-item site-state-categories">
+          
+            <span class="site-state-item-count">0</span>
+            <span class="site-state-item-name">分类</span>
+          
+        </div>
+
+        <div class="site-state-item site-state-tags">
+          <a href="/tags">
+            <span class="site-state-item-count">0</span>
+            <span class="site-state-item-name">标签</span>
+          </a>
+        </div>
+
+      </div>
+
+      
+
+      <div class="links-of-author motion-element">
+        
+      </div>
+
+      
+      
+
+    </div>
+
+    
+      <div class="post-toc-wrap sidebar-panel-active">
+        <div class="post-toc-indicator-top post-toc-indicator"></div>
+        <div class="post-toc">
+          
+          
+            <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生成key"><span class="nav-number">2.</span> <span class="nav-text">生成key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#github设置deploy_key"><span class="nav-number">3.</span> <span class="nav-text">github设置deploy key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#travis添加项目"><span class="nav-number">4.</span> <span class="nav-text">travis添加项目</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#加密私有key"><span class="nav-number">5.</span> <span class="nav-text">加密私有key</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改-travis-yml"><span class="nav-number">6.</span> <span class="nav-text">修改.travis.yml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改hexo的_config-yml"><span class="nav-number">7.</span> <span class="nav-text">修改hexo的_config.yml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#push到github"><span class="nav-number">8.</span> <span class="nav-text">push到github</span></a></li></ol></div>
+          
+        </div>
+        <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+      </div>
+    
+
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="footer-tips">莫问前程凶吉，但求落幕无悔。</div>
+<div class="copyright">
+  
+  &copy; 
+  2015
+  <span class="with-love">
+    <i class="fa fa-heartbeat faa-burst animated faa-fast" style="font-size: 1em;"></i>
+  </span>
+  <span class="author">Oumind</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+  <i class="fa fa-gear faa-spin animated faa-slow" style="font-size: 1em;"></i>
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('.content img').each(function () {
+        var $image = $(this);
+        var $imageWrapLink = $image.parent('a');
+
+        if ($imageWrapLink.size() < 1) {
+          $imageWrapLink = $image.wrap('<a href="' + this.getAttribute('src') + '"></a>').parent('a');
+        }
+        $imageWrapLink.addClass('fancybox');
+      });
+    });
+    $('.fancybox').fancybox({
+      helpers: {
+        overlay: {
+          locked: false
+        }
+      }
+    });
+  </script>
+
+
+  <script type="text/javascript">
+  function hasMobileUA () {
+    var nav = window.navigator;
+    var ua = nav.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  }
+
+  function isDesktop () {
+    return screen.width > 991 && !hasMobileUA();
+  }
+
+  function isTablet () {
+    return screen.width < 992 && screen.width > 767 && hasMobileUA();
+  }
+
+  function isMobile () {
+    return screen.width < 767 && hasMobileUA();
+  }
+
+  function escapeSelector (selector) {
+    return selector.replace(/[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+  }
+</script>
+
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" id="motion.global">
+  $(document).ready(function () {
+    var body = $('body');
+    var isSidebarVisible = false;
+    var sidebarToggle = $('.sidebar-toggle');
+    var sidebarToggleLine1st = $('.sidebar-toggle-line-first')
+    var sidebarToggleLine2nd = $('.sidebar-toggle-line-middle');
+    var sidebarToggleLine3rd = $('.sidebar-toggle-line-last');
+    var sidebar = $('.sidebar');
+
+    var SIDEBAR_WIDTH = '320px';
+    var SIDEBAR_DISPLAY_DURATION = 300;
+
+    var sidebarToogleLineStatusInit = {width: '100%', opacity: 1, left: 0, rotateZ: 0, top: 0};
+
+    var sidebarToggleLine1stStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine1stStatusArrow = {width: '50%', rotateZ: '-45deg', top: '2px'};
+    var sidebarToogleLine1stStatusClose = {width: '100%', rotateZ: '-45deg', top: '5px'};
+
+    var sidebarToggleLine2ndStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine2ndStatusArrow = {width: '90%'};
+    var sidebarToogleLine2ndStatusClose = {opacity: 0};
+
+    var sidebarToggleLine3rdStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine3rdStatusArrow = {width: '50%', rotateZ: '45deg', top: '-2px'};
+    var sidebarToogleLine3rdStatusClose = {width: '100%', rotateZ: '45deg', top: '-5px'};
+
+    LogoAndMenuMotion();
+    sidebatToggleMotion();
+    postsListMotion();
+    backToTopMotion();
+
+
+    $(document)
+      .on('sidebar.isShowing', function () {
+        isDesktop() && body.velocity(
+          {paddingRight: SIDEBAR_WIDTH},
+          SIDEBAR_DISPLAY_DURATION
+        );
+        sidebarContentMotion();
+      })
+      .on('sidebar.isHiding', function () {});
+
+    function LogoAndMenuMotion() {
+      $.Velocity.RunSequence([
+        { e: $('.brand'), p: { opacity: 1 }, o: { duration: 100 } },
+        { e: $('.logo'), p: { opacity: 1, top: 0 }, o: { duration: 50} },
+        
+        { e: $('.logo-line-before i'), p: { translateX: "100%" }, o: { duration: 500, sequenceQueue: false } },
+        { e: $('.logo-line-after i'), p: { translateX: "-100%" }, o: { duration: 500, sequenceQueue: false } },
+        
+        { e: $('.site-title'), p: { opacity: 1, top: 0 }, o: { duration: 200 } }
+      ]);
+      $('.menu-item').velocity('transition.slideDownIn', {display: null});
+    }
+
+
+    function backToTopMotion () {
+      var b2top = $('.back-to-top');
+      b2top.on('click', function () {
+        body.velocity('scroll');
+      });
+    }
+
+    function sidebarShowMotion () {
+
+      sidebarToggleLine1st.velocity(sidebarToogleLine1stStatusClose);
+      sidebarToggleLine2nd.velocity(sidebarToogleLine2ndStatusClose);
+      sidebarToggleLine3rd.velocity(sidebarToogleLine3rdStatusClose);
+
+      sidebar.velocity({width: SIDEBAR_WIDTH}, {
+        display: 'block',
+        duration: SIDEBAR_DISPLAY_DURATION,
+        complete: function () {
+          sidebar.addClass('sidebar-active');
+          sidebar.trigger('sidebar.didShow');
+        }
+      });
+      sidebar.trigger('sidebar.isShowing');
+    }
+
+    function sidebarHideMotion () {
+      isDesktop() && body.velocity({paddingRight: 0});
+      sidebar.velocity('reverse');
+
+      sidebarToggleLine1st.velocity(sidebarToggleLine1stStatusInit);
+      sidebarToggleLine2nd.velocity(sidebarToggleLine2ndStatusInit);
+      sidebarToggleLine3rd.velocity(sidebarToggleLine3rdStatusInit);
+
+      sidebar.removeClass('sidebar-active');
+      sidebar.trigger('sidebar.isHiding');
+    };
+
+    function sidebarContentMotion () {
+      $('.sidebar .motion-element').velocity(
+        'transition.slideRightIn',
+        {stagger: 50, drag: true}
+      );
+    }
+
+    function postsListMotion () {
+      var postMotionOptions = window.postMotionOptions || {stagger: 300, drag: true};
+      $('.post').velocity('transition.slideDownIn', postMotionOptions);
+    }
+
+    function sidebatToggleMotion () {
+      sidebarToggle.on('click', function () {
+        isSidebarVisible ? sidebarHideMotion() : sidebarShowMotion();
+        isSidebarVisible = !isSidebarVisible;
+      });
+
+      sidebarToggle.hover(function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusArrow);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusArrow);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusArrow);
+      }, function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusInit);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusInit);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusInit);
+      });
+    }
+  });
+
+</script>
+
+
+
+
+
+  
+  
+<script type="text/javascript" id="bootstrap.scrollspy.custom">
+  /* ========================================================================
+  * Bootstrap: scrollspy.js v3.3.2
+  * http://getbootstrap.com/javascript/#scrollspy
+  * ========================================================================
+  * Copyright 2011-2015 Twitter, Inc.
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+  * ======================================================================== */
+
+  /**
+   * Custom by iissnan
+   *
+   * - Add a `clear.bs.scrollspy` event.
+   * - Esacpe targets selector.
+   */
+
+
+  +function ($) {
+    'use strict';
+
+    // SCROLLSPY CLASS DEFINITION
+    // ==========================
+
+    function ScrollSpy(element, options) {
+      this.$body          = $(document.body)
+      this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+      this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+      this.selector       = (this.options.target || '') + ' .nav li > a'
+      this.offsets        = []
+      this.targets        = []
+      this.activeTarget   = null
+      this.scrollHeight   = 0
+
+      this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+      this.refresh()
+      this.process()
+    }
+
+    ScrollSpy.VERSION  = '3.3.2'
+
+    ScrollSpy.DEFAULTS = {
+      offset: 10
+    }
+
+    ScrollSpy.prototype.getScrollHeight = function () {
+      return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+    }
+
+    ScrollSpy.prototype.refresh = function () {
+      var that          = this
+      var offsetMethod  = 'offset'
+      var offsetBase    = 0
+
+      this.offsets      = []
+      this.targets      = []
+      this.scrollHeight = this.getScrollHeight()
+
+      if (!$.isWindow(this.$scrollElement[0])) {
+        offsetMethod = 'position'
+        offsetBase   = this.$scrollElement.scrollTop()
+      }
+
+      this.$body
+        .find(this.selector)
+        .map(function () {
+          var $el   = $(this)
+          var href  = $el.data('target') || $el.attr('href')
+          var $href = /^#./.test(href) && $(escapeSelector(href)) // Need to escape selector.
+
+          return ($href
+            && $href.length
+            && $href.is(':visible')
+            && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+        })
+        .sort(function (a, b) { return a[0] - b[0] })
+        .each(function () {
+          that.offsets.push(this[0])
+          that.targets.push(this[1])
+        })
+
+
+    }
+
+    ScrollSpy.prototype.process = function () {
+      var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+      var scrollHeight = this.getScrollHeight()
+      var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+      var offsets      = this.offsets
+      var targets      = this.targets
+      var activeTarget = this.activeTarget
+      var i
+
+      if (this.scrollHeight != scrollHeight) {
+        this.refresh()
+      }
+
+      if (scrollTop >= maxScroll) {
+        return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+      }
+
+      if (activeTarget && scrollTop < offsets[0]) {
+        $(this.selector).trigger('clear.bs.scrollspy')  // Add a custom event.
+        this.activeTarget = null
+        return this.clear()
+      }
+
+      for (i = offsets.length; i--;) {
+        activeTarget != targets[i]
+          && scrollTop >= offsets[i]
+          && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          && this.activate(targets[i])
+      }
+    }
+
+    ScrollSpy.prototype.activate = function (target) {
+      this.activeTarget = target
+
+      this.clear()
+
+      var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
+
+      var active = $(selector)
+        .parents('li')
+        .addClass('active')
+
+      if (active.parent('.dropdown-menu').length) {
+        active = active
+          .closest('li.dropdown')
+          .addClass('active')
+      }
+
+      active.trigger('activate.bs.scrollspy')
+    }
+
+    ScrollSpy.prototype.clear = function () {
+      $(this.selector)
+        .parentsUntil(this.options.target, '.active')
+        .removeClass('active')
+    }
+
+
+    // SCROLLSPY PLUGIN DEFINITION
+    // ===========================
+
+    function Plugin(option) {
+      return this.each(function () {
+        var $this   = $(this)
+        var data    = $this.data('bs.scrollspy')
+        var options = typeof option == 'object' && option
+
+        if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+        if (typeof option == 'string') data[option]()
+      })
+    }
+
+    var old = $.fn.scrollspy
+
+    $.fn.scrollspy             = Plugin
+    $.fn.scrollspy.Constructor = ScrollSpy
+
+
+    // SCROLLSPY NO CONFLICT
+    // =====================
+
+    $.fn.scrollspy.noConflict = function () {
+      $.fn.scrollspy = old
+      return this
+    }
+
+
+    // SCROLLSPY DATA-API
+    // ==================
+
+    $(window).on('load.bs.scrollspy.data-api', function () {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this)
+        Plugin.call($spy, $spy.data())
+      })
+    })
+
+  }(jQuery);
+</script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0 && isDesktop()) {
+        setTimeout(function () {
+          $('.sidebar-toggle').trigger('click');
+        }, 800);
+      }
+    });
+  </script>
+
+
+
+
+  
+
+  
+  
+
+  
+
+
+  
+</body>
+</html>
